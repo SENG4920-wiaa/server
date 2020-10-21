@@ -27,7 +27,7 @@ class GroupViewSet(viewsets.ModelViewSet):
 class MusicViewSet(viewsets.GenericViewSet):
     def list(self, request):
         keyword = request.query_params.get('keyword', None)
-        url = f'https://freesound.org/search/?q={keyword}&f=duration%3A%5B0+TO+3%5D&s=score+desc&advanced=1&g=1'
+        sourceurl = f'https://freesound.org/search/?q={keyword}&f=duration%3A%5B0+TO+3%5D&s=score+desc&advanced=1&g=1'
 
         source = requests.get(url).text
         bs = BeautifulSoup(source, 'html.parser')
@@ -43,7 +43,7 @@ class MusicViewSet(viewsets.GenericViewSet):
 class EffectViewSet(viewsets.GenericViewSet):
     def list(self, request):
         keyword = request.query_params.get('keyword', None)
-        url = f'https://freemusicarchive.org/search?adv=1&quicksearch={keyword}&music-filter-remix-allowed=1&sort=track_interest'
+        sourceurl = f'https://freemusicarchive.org/search?adv=1&quicksearch={keyword}&music-filter-remix-allowed=1&sort=track_interest'
 
         source = requests.get(url).text
         bs = BeautifulSoup(source, 'html.parser')
