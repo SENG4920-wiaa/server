@@ -29,7 +29,7 @@ class MusicViewSet(viewsets.GenericViewSet):
         keyword = request.query_params.get('keyword', None)
         sourceurl = f'https://freesound.org/search/?q={keyword}&f=duration%3A%5B0+TO+3%5D&s=score+desc&advanced=1&g=1'
 
-        source = requests.get(url).text
+        source = requests.get(sourceurl).text
         bs = BeautifulSoup(source, 'html.parser')
         tracks = bs.find_all("a", class_="mp3_file")
 
@@ -45,9 +45,11 @@ class EffectViewSet(viewsets.GenericViewSet):
         keyword = request.query_params.get('keyword', None)
         sourceurl = f'https://freemusicarchive.org/search?adv=1&quicksearch={keyword}&music-filter-remix-allowed=1&sort=track_interest'
 
-        source = requests.get(url).text
+        source = requests.get(sourceurl).text
         bs = BeautifulSoup(source, 'html.parser')
         tracks = bs.find_all("a", class_="icn-arrow")
+
+        print(tracks)
 
         urls = []
         for track in tracks:
