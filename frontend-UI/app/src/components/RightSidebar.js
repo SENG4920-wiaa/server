@@ -23,7 +23,7 @@ const RightSidebar = (props) => {
   return (
     <React.Fragment>
       <div
-        className="right-side-bar"
+        className="right-side-bar grey lighten-1"
         style={{
           transform: `translatex(${xPosition}px)`,
           width: `${width}px`,
@@ -32,7 +32,7 @@ const RightSidebar = (props) => {
       >
         <button
           onClick={() => toggleMenu()}
-          className="right-toggle-menu"
+          className="right-toggle-menu grey lighten-1"
           style={{
             transform: `translate(${-width}px, 20vh)`
           }}

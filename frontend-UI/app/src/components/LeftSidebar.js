@@ -5,7 +5,7 @@ import '../css/Sidebar.css'
 const LeftSidebar = (props) => {
   const { width, height, children } = props.data;
   const [xPosition, setX] = React.useState(-width);
-  
+
   const toggleMenu = () => {
     if (xPosition < 0) {
       setX(0);
@@ -20,7 +20,7 @@ const LeftSidebar = (props) => {
   return (
     <React.Fragment>
       <div
-        className="left-side-bar"
+        className="left-side-bar grey lighten-1"
         style={{
           transform: `translatex(${xPosition}px)`,
           width: `${width}px`,
@@ -29,7 +29,7 @@ const LeftSidebar = (props) => {
       >
         <button
           onClick={() => toggleMenu()}
-          className="left-toggle-menu"
+          className="left-toggle-menu grey lighten-1"
           style={{
             transform: `translate(${width}px, 20vh)`
           }}
