@@ -5,6 +5,7 @@ from backend.quickstart.serializers import UserSerializer, GroupSerializer
 from rest_framework.response import Response
 import requests 
 from bs4 import BeautifulSoup
+import json
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -24,7 +25,7 @@ class GroupViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class MusicViewSet(viewsets.GenericViewSet):
+class EffectViewSet(viewsets.GenericViewSet):
     def list(self, request):
         keyword = request.query_params.get('keyword', None)
         sourceurl = f'https://freesound.org/search/?q={keyword}&f=duration%3A%5B0+TO+3%5D&s=score+desc&advanced=1&g=1'
@@ -40,20 +41,18 @@ class MusicViewSet(viewsets.GenericViewSet):
 
         return Response({"tracks": urls})
 
-class EffectViewSet(viewsets.GenericViewSet):
+class MusicViewSet(viewsets.GenericViewSet):
     def list(self, request):
         keyword = request.query_params.get('keyword', None)
-        sourceurl = f'https://freemusicarchive.org/search?adv=1&quicksearch={keyword}&music-filter-remix-allowed=1&sort=track_interest'
+        sourceurl = f'https://freemusicarchive.org/search?adv=1&quicksearch={keyword}&&&music-filter-remix-allowed=1'
 
         source = requests.get(sourceurl).text
         bs = BeautifulSoup(source, 'html.parser')
-        tracks = bs.find_all("a", class_="icn-arrow")
-
-        print(tracks)
+        tracks = bs.find_all("div", class_="play-item")
 
         urls = []
         for track in tracks:
-            url = track['href']
-            urls.append(url)
+            info = json.loads(track['data-track-info'])
+            urls.append(info['playbackUrl'])
 
         return Response({"tracks": urls})
