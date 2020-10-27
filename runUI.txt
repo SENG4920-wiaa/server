@@ -1,0 +1,20 @@
+RUN python server
+from main project directory:
+$ cd frontend-UI/server
+$ virtualenv venv
+$ source venv/bin/activate
+(venv)$ pip3 install -r requirements.txt
+(venv)$ python3 app.py
+
+RUN and BUILD react app
+ensure yarn and npm is installed
+In a new terminal from main projec directory:
+$ cd frontend-UI/app
+$ yarn add package.json
+$ yarn build
+
+Now by going to the python flask link, you should see the react app, refresh te page
+When testing new frontend code, run the command 
+$ yarn build
+before refreshig the webpage
+This command compiles all the json of the react app.
