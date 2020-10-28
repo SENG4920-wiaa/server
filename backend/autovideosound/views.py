@@ -2,6 +2,7 @@ import os
 from time import time
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
+from django.conf import settings
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, viewsets
@@ -11,10 +12,25 @@ import json
 
 class UploadView(APIView):
   def post(self, request):
-    video = request.data['video']
-    video_key = str(int(time())) + '_' + video.__str__()
-    path = default_storage.save(video_key, ContentFile(video.read()))
+    try:
+      video = request.data['video']
+      video_key = str(int(time())) + '_' + video.__str__()
+      path = default_storage.save(video_key, ContentFile(video.read()))
+    except:
+      return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    self.start_aws_analysis(video_key)
+
     return Response(video_key, status=status.HTTP_201_CREATED)
+
+  def start_aws_analysis(self, video_key):
+    put_url = json.loads(requests.get(
+      f'https://dlqyv3dixh.execute-api.ap-southeast-2.amazonaws.com/test/geturl?fileName={video_key}'
+    ).text)['url']
+
+    with open(os.path.join(settings.MEDIA_ROOT, video_key), 'rb') as f:
+      response = requests.put(put_url, data=f.read())
+    
 
 class EffectViewSet(viewsets.GenericViewSet):
   def list(self, request):
