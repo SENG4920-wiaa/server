@@ -18,13 +18,14 @@ from rest_framework import routers
 from autovideosound import views
 from django.conf import settings
 from django.conf.urls.static import static
-from django.conf.urls import url
+from django.conf.urls import url, re_path
 
 router = routers.DefaultRouter()
 # router.register(r'users', views.UserViewSet)
 # router.register(r'groups', views.GroupViewSet)
 router.register(r'music', views.MusicViewSet, basename='music')
 router.register(r'effects', views.EffectViewSet, basename='effects')
+router.register(r'freq', views.FreqViewSet, basename='freq')
 
 
 # Wire up our API using automatic URL routing.
@@ -33,5 +34,7 @@ urlpatterns = [
     path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^upload/$', views.UploadView.as_view(), name='upload'),
+    re_path(r'^labels/(?P<filename>[^/]+)$', views.LabelView.as_view()),
+    re_path(r'^transcript/(?P<filename>[^/]+)$', views.TranscriptView.as_view())
 ] 
 # + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
