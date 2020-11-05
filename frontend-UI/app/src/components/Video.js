@@ -1,8 +1,9 @@
-import React, { Component, useState } from 'react';
-import { useDropzone } from "react-dropzone"
+import React, { useState } from 'react';
+import { useDropzone } from 'react-dropzone'
+import { connect } from 'react-redux'
 //https://github.com/NikValdez/react-dropzone-tut/blob/master/src/App.js
 
-function Video () {
+const Video = (props) => {
 
   const [files, setFiles] = useState([])
 
@@ -28,6 +29,12 @@ function Video () {
     </div>
   ))
 
+  const updateStore = () => (
+    files.map((file) => (
+      props.updateVideo(file.name, file)
+    ))
+  )
+
   return (
       <div>
         <div {...getRootProps()}>
@@ -35,10 +42,19 @@ function Video () {
           <div className="drag-drop-zone" width="48" height="48">
             <p>Drop Video Here</p>
             {videos}
+            {updateStore()}
           </div>
         </div>
       </div>
   );
 }
 
-export default Video
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updateVideo: (filename, blob) => {
+      dispatch( {type: 'UPDATE_VIDEO', filename: filename, blob: blob} )
+    }
+  }
+}
+
+export default connect(null, mapDispatchToProps)(Video)
