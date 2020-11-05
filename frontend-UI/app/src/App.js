@@ -4,7 +4,7 @@ import './css/Style.css'
 import Navbar from './components/Navbar'
 import BackgroundSoundBar from './components/BackgroundSoundBar'
 import EffectsSoundBar from './components/EffectsSoundBar'
-import Video from './components/Video'
+import VideoFrame from './components/VideoFrame'
 
 class App extends Component {
   render(){
@@ -17,7 +17,7 @@ class App extends Component {
           <div className="rightSidebar"><EffectsSoundBar /></div>
           <div className="leftSidebar"><BackgroundSoundBar /></div>
           <div className="content">
-            <Video />
+            <VideoFrame />
           </div>
         </div>
         <footer>
