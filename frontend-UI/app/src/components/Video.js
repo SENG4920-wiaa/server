@@ -5,43 +5,50 @@ import { connect } from 'react-redux'
 
 const Video = (props) => {
 
-  const [files, setFiles] = useState([])
+  const [file, setFile] = useState(null)
 
   const { getRootProps, getInputProps } = useDropzone({
     accept: "video/*",
+    maxFiles:1,
     onDrop: (acceptedFiles) => {
-      setFiles(
-        acceptedFiles.map((file) =>
-          Object.assign(file, {
-            preview: URL.createObjectURL(file),
-          })
+      setFile(
+        Object.assign(
+          acceptedFiles[0], 
+          {preview: URL.createObjectURL(acceptedFiles[0])}
         )
       )
     },
   })
 
-  const videos = files.map((file) => (
-    <div key={file.name}>
-      <div>
-        <video src={file.preview} className="video-player" controls>
-        </video>
-      </div>
-    </div>
-  ))
+  const videos = () => {
+    if(file == null) {
+      return (
+        <p>Drop Video Here</p>
+      )
+    } else {
+      return (
+        <div key={file.name}>
+          <div>
+            <video src={file.preview} className="video-player" controls>
+            </video>
+          </div>
+        </div>
+      )
+    }
+  }
 
-  const updateStore = () => (
-    files.map((file) => (
-      props.updateVideo(file.name, file)
-    ))
-  )
+  const updateStore = () => {
+    if(file != null) {
+      props.updateVideo(file.name, file);
+    }
+  }
 
   return (
       <div>
         <div {...getRootProps()}>
           <input {...getInputProps()} />
           <div className="drag-drop-zone" width="48" height="48">
-            <p>Drop Video Here</p>
-            {videos}
+            {videos()}
             {updateStore()}
           </div>
         </div>
