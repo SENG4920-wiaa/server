@@ -16,6 +16,8 @@ from google.cloud.videointelligence import enums
 from google.protobuf.json_format import MessageToDict
 
 from wordfreq import zipf_frequency
+import copy
+import re
 
 class UploadView(APIView):
   def post(self, request):
@@ -109,10 +111,34 @@ class TranscriptView(APIView):
         file_obj = request.data['file']
         transcript = self.speech_transcription(file_obj)
 
-        return Response(transcript) 
+        transcriptions = transcript["annotation_results"][0]["speech_transcriptions"]
+
+        text = ""
+        
+        for transcription in transcriptions:
+            text += transcription["alternatives"][0]["transcript"]
+
+        words = []
+
+        for transcription in transcriptions:
+            for word in transcription["alternatives"][0]["words"]:
+                str = word["word"]
+                str = re.sub('^\W+', '', str)
+                str = re.sub('\W+$', '', str)
+                freq = zipf_frequency(str, "en")
+
+                wordcopy = copy.deepcopy(word)
+                wordcopy["word"] = str
+                wordcopy["freq"] = freq
+
+                words.append(wordcopy)
+
+        wordssorted = sorted(words, key=lambda x: x["freq"])
+
+        return Response({"transcript": text, "words": words, "sorted": wordssorted})
 
     def speech_transcription(self, file):
-        """Transcribe speech from a video stored on GCS."""
+        """Transcribe speech from a video given a file path."""
         from google.cloud import videointelligence
 
         video_client = videointelligence.VideoIntelligenceServiceClient()
