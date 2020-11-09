@@ -2,10 +2,13 @@ import React, { Component } from 'react';
 import Video from './Video'
 import { connect } from 'react-redux'
 
-class VideoFrame extends Component {
+const VideoFrame = (props) => {
   // send api request for transcript and labels
 
-  async componentDidUpdate() {
+  const testAudioDOM = props.test_audio;
+  console.log(props);
+
+  const componentDidUpdate = async () => {
     if (this.props.videoName !== null && this.props.videoBlob !== null) {
       console.log(this.props.videoBlob);
       var blobFile = new File([this.props.videoBlob], this.props.videoName, {type: this.props.videoBlob.type})
@@ -73,13 +76,12 @@ class VideoFrame extends Component {
 
     }
   }
-  render() {
-    return (
-      <div>
-        <Video />
-      </div>
-    )
-  }
+
+  return (
+    <div>
+      <Video test_audio={props.test_audio} />
+    </div>
+  );
 }
 // return an object representing the store state variables we want this
 // component to have access to, in this case videoName and videoBlob
