@@ -47,9 +47,20 @@ class LabelView(APIView):
         file_obj = request.data['file']
 
         # self.implicit()
-        labels = self.analyze_labels_file(file_obj)
+        annotations = self.analyze_labels_file(file_obj)
 
-        return Response(labels) 
+        labels = annotations["annotation_results"][0]["segment_label_annotations"]
+
+        sanitised = []
+
+        for label in labels:
+            description = label["entity"]["description"]
+            confidence = label["segments"][0]["confidence"]
+            sanitised.append({"description": description, "confidence": confidence})
+
+        sanitised.sort(key=lambda x: x["confidence"], reverse=True)
+
+        return Response(sanitised) 
 
     def implicit(self):
         from google.cloud import storage
