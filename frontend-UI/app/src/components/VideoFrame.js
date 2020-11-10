@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Video from './Video'
 import { connect } from 'react-redux'
-import axios from 'axios'
 
 class VideoFrame extends Component {
   // send api request for transcript and labels
@@ -20,12 +19,19 @@ class VideoFrame extends Component {
             "Content-Type": 'video/mp4'
           }
         }
-      ).then(res => {
-        //var transcript = json.annotation_results[0].speech_transcriptions[0].alternatives[0].transcript
-        //var words = json.annotation_results[0].speech_transcriptions[0].alternatives[0].words
-        // console.log(transcript)
-        // console.log(words)
-        this.props.updateTranscript(res.json())
+      ).then(res => res.json()
+      ).then(data => {
+        let transcript = ""
+        let words = []
+        for (const items of data.annotation_results[0].speech_transcriptions) {
+          const alts = items.alternatives[0]
+          transcript = transcript.concat(alts.transcript)
+          transcript = transcript.concat(" ")
+          for (const w of alts.words) {
+            words.push(w)
+          }
+        }
+        this.props.updateTranscript(transcript, words)
       })
       fetch(`http://127.0.0.1:8000/labels/${this.props.videoName}`,
         {
@@ -35,8 +41,13 @@ class VideoFrame extends Component {
             "Content-Type": 'video/mp4'
           }
         }
-      ).then(res => {
-        this.props.updateLabels(res.json())
+      ).then(res => res.json()
+      ).then(data => {
+        let labels = []
+        for (const items of data.annotation_results[0].segment_label_annotations){
+          labels.push(items.entity.description)
+        }
+        this.props.updateLabels(labels)
       })
     }
   }
@@ -62,7 +73,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     updateTranscript: (transcript, words) => {
-      dispatch( {type: 'UPDATE_TRANSCRIPT', transcript: transcript} )
+      dispatch( {type: 'UPDATE_TRANSCRIPT', transcript: transcript, words: words} )
     },
     updateLabels: (labels) => {
       dispatch( {type: 'UPDATE_LABELS', labels: labels})

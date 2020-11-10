@@ -11,7 +11,6 @@ class EffectsSoundBar extends Component {
 
     return (
       <div>
-        <RightSidebar data={this.state}/>
       </div>
     )
   }
