@@ -4,7 +4,7 @@ const initState = {
   appliedMusic: null,
   appliedEffects: [],
   labels: [],
-  transcript: [],
+  transcript: "",
   words: []
 }
 
@@ -22,8 +22,8 @@ const rootReducer = (state = initState, action) => {
   if (action.type === 'UPDATE_TRANSCRIPT'){
     return {
       ...state,
-      transcript: action.transcript//,
-      //words: action.words
+      transcript: action.transcript,
+      words: action.words
     }
   }
   if (action.type === 'UPDATE_LABELS'){
