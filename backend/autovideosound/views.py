@@ -3,6 +3,7 @@ from time import time
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.conf import settings
+from django.http import FileResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, viewsets
@@ -17,26 +18,25 @@ from google.protobuf.json_format import MessageToDict
 
 from wordfreq import zipf_frequency
 
+import moviepy.editor as editor
+
 class UploadView(APIView):
   def post(self, request):
     try:
-      video = request.data['video']
+      video = request.data['file']#['video']
       video_key = str(int(time())) + '_' + video.__str__()
       path = default_storage.save(video_key, ContentFile(video.read()))
     except:
       return Response(status=status.HTTP_400_BAD_REQUEST)
-
-    self.start_aws_analysis(video_key)
-
     return Response(video_key, status=status.HTTP_201_CREATED)
 
-  def start_aws_analysis(self, video_key):
-    put_url = json.loads(requests.get(
-      f'https://dlqyv3dixh.execute-api.ap-southeast-2.amazonaws.com/test/geturl?fileName={video_key}'
-    ).text)['url']
+#   def start_aws_analysis(self, video_key):
+#     put_url = json.loads(requests.get(
+#       f'https://dlqyv3dixh.execute-api.ap-southeast-2.amazonaws.com/test/geturl?fileName={video_key}'
+#     ).text)['url']
 
-    with open(os.path.join(settings.MEDIA_ROOT, video_key), 'rb') as f:
-      response = requests.put(put_url, data=f.read())
+#     with open(os.path.join(settings.MEDIA_ROOT, video_key), 'rb') as f:
+#       response = requests.put(put_url, data=f.read())
 
 class LabelView(APIView):
     parser_classes = [FileUploadParser]
@@ -204,3 +204,82 @@ class MusicViewSet(viewsets.GenericViewSet):
           urls.append(info['playbackUrl'])
 
       return Response({"tracks": urls})
+
+class CompiledView(APIView):
+    def get(self, request, filename):
+        # Parse JSON data
+        if 'music' in request.data: 
+            music_url = request.data['music']['url']
+            if 'start' in request.data['music']: music_start = request.data['music']['start']
+            else: music_start = 0
+            if 'volume' in request.data['music']: music_volume = request.data['music']['volume']/2
+            else: music_volume = 1
+        else: music_url = None
+        effects = []
+        if 'effects' in request.data:
+            for n, e in enumerate(request.data['effects']):
+                effect = {}
+                effect['url'] = request.data['effects'][n]['url']
+                if 'start' in request.data['effects'][n]: effect['start'] = request.data['effects'][n]['start']
+                else: effect['start'] = 0
+                if 'volume' in request.data['effects'][n]: effect['volume'] = request.data['effects'][n]['volume']/2
+                else: effect['volume'] = 1
+                effects.append(effect)
+
+        # Find video file in uploaded files
+        try:
+            video_path = default_storage.path(filename)
+            video = editor.VideoFileClip(video_path).fx(editor.afx.audio_normalize)
+        except: return Response('Video file not found. Plase upload using /upload/',
+            status=status.HTTP_400_BAD_REQUEST)
+
+        audio_clips = [video.audio] if video.audio else []
+
+        # Process music
+        if music_url: 
+            music_file = requests.get(music_url).content
+            f = open('temp_music.mp3', 'wb')
+            f.write(music_file)
+            music = editor.AudioFileClip('temp_music.mp3')
+            if music.duration > video.duration:
+                if video.duration + music_start > music.duration: 
+                    music_start = music.duration - video.duration
+                if music_start < 0: music_start = 0
+                music = music.subclip(music_start, music_start + video.duration)
+            music = music.volumex(music_volume)
+            audio_clips.append(music)
+
+        # Process effects
+        def pad_effect(start, effect, duration):
+            def pad_effect_frame(times, start=start, effect=effect):
+                if type(times) == int: return [0,0]   
+                return [effect.get_frame(time-start) if start < time < start+effect.duration else [0,0]
+                    for time in times]
+            return editor.AudioClip(pad_effect_frame, duration=duration)
+
+        for e in effects:
+            effect_file = requests.get(e['url']).content
+            open('temp_audio.mp3', 'wb').write(effect_file)
+            effect = editor.AudioFileClip('temp_audio.mp3')
+            effect = effect.volumex(e['volume'])
+            effect = pad_effect(e['start'], effect, video.duration)
+            effect.fps = 44100
+            # effect.write_audiofile('temp_audio.mp3', fps=44100)
+            # effect = editor.AudioFileClip('temp_audio.mp3')
+            audio_clips.append(effect)
+
+        # Compose
+        composed_audio = editor.CompositeAudioClip(audio_clips)
+        composed_video = video.set_audio(composed_audio)
+        composed_video.write_videofile('temp_video.mp4')
+
+        response = FileResponse(open('temp_video.mp4', 'rb'))
+
+        try: os.remove('temp_video.mp4')
+        except: pass
+        try: os.remove('temp_audio.mp3')
+        except: pass
+        try: os.remove('temp_music.mp3')
+        except: pass
+
+        return response

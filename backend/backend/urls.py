@@ -35,6 +35,7 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^upload/$', views.UploadView.as_view(), name='upload'),
     re_path(r'^labels/(?P<filename>[^/]+)$', views.LabelView.as_view()),
-    re_path(r'^transcript/(?P<filename>[^/]+)$', views.TranscriptView.as_view())
+    re_path(r'^transcript/(?P<filename>[^/]+)$', views.TranscriptView.as_view()),
+    re_path(r'^compiled/(?P<filename>[^/]+)$', views.CompiledView.as_view()),
 ] 
 # + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
