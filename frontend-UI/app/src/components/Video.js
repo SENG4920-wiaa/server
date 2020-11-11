@@ -25,7 +25,7 @@ const Video = (props) => {
 
   const videoElem = (
     <video 
-      src={file == null ? null : file.preview} 
+      src={file === null ? null : file.preview} 
       className="video-player" 
       controls
       {...getVideoProps()}
@@ -34,7 +34,7 @@ const Video = (props) => {
   );
 
   const preview = () => {
-    if(file == null) {
+    if(file === null) {
       return (
         <p>Drop Video Here</p>
       )
@@ -44,7 +44,7 @@ const Video = (props) => {
   }
 
   const updateStore = () => {
-    if(file != null) {
+    if(file !== null) {
       props.updateVideo(file.name, file);
     }
   }
