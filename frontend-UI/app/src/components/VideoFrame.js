@@ -6,9 +6,6 @@ import axios from 'axios'
 const VideoFrame = (props) => {
   // send api request for transcript and labels
 
-  const testAudioDOM = props.test_audio;
-  console.log(props);
-
   const componentDidUpdate = () => {
     if (this.props.videoName !== null && this.props.videoBlob !== null) {
       console.log(this.props.videoBlob);
@@ -46,7 +43,7 @@ const VideoFrame = (props) => {
 
   return (
     <div>
-      <Video test_audio={props.test_audio} />
+      <Video/>
     </div>
   );
 }
