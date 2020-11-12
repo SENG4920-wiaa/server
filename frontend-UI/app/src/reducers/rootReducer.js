@@ -1,11 +1,16 @@
 const initState = {
   videoName: null,
   videoBlob: null,
-  appliedMusic: null,
-  appliedEffects: [],
-  labels: [],
-  transcript: "",
-  words: []
+  appliedMusic: {
+    url: null,
+    start: null,
+    volume: null
+  },
+  appliedEffects: null,
+  labels: null,
+  labelMusic: null,
+  transcript: null,
+  words: null
 }
 
 const rootReducer = (state = initState, action) => {
@@ -30,6 +35,24 @@ const rootReducer = (state = initState, action) => {
     return {
       ...state,
       labels: action.labels
+    }
+  }
+  if (action.type === 'UPDATE_LABEL_MUSIC'){
+    console.log(action.music)
+    return {
+      ...state,
+      labelMusic: action.music
+    }
+  }
+  if (action.type === 'UPDATE_BACKGROUND_SONG'){
+    console.log(action.song)
+    return {
+      ...state,
+      appliedMusic: {
+        url: action.song,
+        start: 0,
+        volume: 1
+      }
     }
   }
   return state;
