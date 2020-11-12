@@ -3,48 +3,21 @@ import LeftSidebar from './LeftSidebar'
 import { connect } from 'react-redux'
 
 class BackgroundSoundBar extends Component {
-  state = {
-    children : [],
-    elements: []
+
+
+  handleBackgroundMusic = (selectedOption) => {
+    this.props.updateBackgroundMusic(selectedOption.value)
   }
-
-  componentDidUpdate() {
-    if (this.props.labels !== []){
-      for (const label of this.props.labels){
-        fetch(`http://127.0.0.1:8000/music/?keyword=${label}`,
-          {
-            method: 'GET',
-          }
-        ).then(res => res.json()
-        ).then(data => {
-          if (data.tracks.length > 0) {
-            const element = {
-              label: label,
-              tracks: data.tracks
-            }
-            this.state.elements.push(element)
-          }
-          }
-        )
-      }
-    }
-
-  }
-
-
 
   render () {
-    this.state.children = this.state.elements.map(element => {
-      return (
-        <div className="label">
-          <div>label: {element.label}</div>
-          <div>tracks: {element.tracks} </div>
-        </div>
-      )
-    })
-    return (
+    console.log("music")
+    if (this.props.music) {
+      this.props.music.map(m => console.log(m.label))
+    }
+    return(
       <div>
-        { this.state.children }
+        <h5>Background Music</h5>
+        <LeftSidebar handleMusic={this.handleBackgroundMusic} music={this.props.music} />
       </div>
     )
   }
@@ -52,8 +25,16 @@ class BackgroundSoundBar extends Component {
 //<LeftSidebar data={this.state}/>
 const mapStateToProps = (state) => {
   return {
-    labels: state.labels
+    music: state.labelMusic
   }
 }
 
-export default connect(mapStateToProps, null)(BackgroundSoundBar)
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updateBackgroundMusic: (song) => {
+      dispatch( {type: 'UPDATE_BACKGROUND_SONG', song: song} )
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(BackgroundSoundBar)

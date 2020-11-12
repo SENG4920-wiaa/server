@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
 import RightSidebar from './RightSidebar'
+import { connect } from 'react-redux'
 
 class EffectsSoundBar extends Component {
-  state = {
-    width : 270,
-    height : 100,
-    children : ["hell"]
-  }
+
   render () {
 
     return (
@@ -16,4 +13,10 @@ class EffectsSoundBar extends Component {
   }
 }
 
-export default EffectsSoundBar
+const mapStateToProps = (state) => {
+  return {
+    transcript: state.transcript
+  }
+}
+
+export default connect(mapStateToProps)(EffectsSoundBar)

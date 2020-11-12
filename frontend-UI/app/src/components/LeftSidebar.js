@@ -1,42 +1,25 @@
-//code from https://medium.com/javascript-in-plain-english/create-a-reusable-sidebar-component-with-react-d75cf48a053a
-import React from 'react';
-import '../css/Sidebar.css'
+import React, { Component, useEffect } from 'react';
+import WindowedSelect from "react-windowed-select";
+function LeftSidebar(props){
 
-const LeftSidebar = (props) => {
-  const { width, height, children } = props.data;
-  const [xPosition, setX] = React.useState(-width);
+  const options = [];
 
-  const toggleMenu = () => {
-    if (xPosition < 0) {
-      setX(0);
-    } else {
-      setX(-width);
+  if (props.music){
+    for (const element of props.music){
+      for (const track of element.tracks){
+        const title = track.split('/')[4].replace('/_/g', ' ')
+        options.push({
+          label: `${element.label} : ${title}`,
+          value: track
+        });
+      }
     }
-  };
+  }
 
-  React.useEffect(() => {
-    setX(0);
-  }, []);
-  return (
-    <React.Fragment>
-      <div
-        className="left-side-bar grey lighten-1"
-        style={{
-          transform: `translatex(${xPosition}px)`,
-          width: `${width}px`,
-          minHeight: `${height}vh`
-        }}
-      >
-        <button
-          onClick={() => toggleMenu()}
-          className="left-toggle-menu grey lighten-1"
-          style={{
-            transform: `translate(${width}px, 20vh)`
-          }}
-        ></button>
-        <div className="content">{children}</div>
-      </div>
-    </React.Fragment>
-  );
+  return(
+    <div className="backgroundMusic">
+    <WindowedSelect onChange={props.handleMusic} options={options}/>
+    </div>
+  )
 };
 export default LeftSidebar
