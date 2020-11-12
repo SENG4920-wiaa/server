@@ -111,7 +111,7 @@ class VideoFrame extends Component {
   render() {
     return (
       <div>
-        <Video />
+        <Video {...this.props} />
       </div>
     )
   }

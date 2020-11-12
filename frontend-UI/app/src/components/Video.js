@@ -5,6 +5,8 @@ import { connect } from 'react-redux'
 
 const Video = (props) => {
   console.log(props);
+  window.setBackgroundAudio = setBackgroundAudio.bind(this);
+
   const [file, setFile] = useState(null);
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -59,6 +61,8 @@ const Video = (props) => {
           audio_element().pause();
       }
     );
+    if(backgroundAudio != null && backgroundAudio != except_for)
+      backgroundAudio.pause();
     console.log('</stopAllExcept>');
   };
 
@@ -75,7 +79,12 @@ const Video = (props) => {
       }
     );
 
+    if(backgroundAudio != null && backgroundAudio.readyState < window.HAVE_FUTURE_DATA) {
+      console.info('Music is stalled: State == ' + backgroundAudio.readyState);
+    }
+
     return videoRef.current.readyState < window.HAVE_FUTURE_DATA ||
+      (backgroundAudio != null && backgroundAudio.readyState < window.HAVE_FUTURE_DATA) ||
       syncedAudio.some(
         ({audio_element, ...rest}) =>
           audio_element.readyState < window.HAVE_FUTURE_DATA
