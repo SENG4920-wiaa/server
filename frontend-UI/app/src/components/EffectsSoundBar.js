@@ -4,10 +4,24 @@ import { connect } from 'react-redux'
 
 class EffectsSoundBar extends Component {
 
-  render () {
+  handleAddEffects = (selectedElement) => {
+    this.props.addEffects({
+      src: selectedElement.value,
+      video_location:0,
+      audio_start:0,
+      audio_length:-1,
+    });
+  }
 
+  render () {
+    console.log('effects');
+    if(this.props.transcript) {
+      this.props.transcript.map(m => console.log(m.label));
+    }
     return (
       <div>
+        <h5> Sound Effects</h5>
+        <RightSidebar handleAdd={handleAddEffects} effects={this.props.effects}></RightSidebar>
       </div>
     )
   }

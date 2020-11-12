@@ -28,7 +28,7 @@ const Video = (props) => {
       src={file === null ? null : file.preview} 
       className="video-player" 
       controls
-      {...getVideoProps()}
+      {...getVideoProps(props.appliedEffects)}
       >
     </video>
   );
@@ -62,6 +62,12 @@ const Video = (props) => {
   );
 }
 
+const mapStateToProps = (state) => {
+  return {
+    appliedEffects: state.appliedEffects
+  }
+}
+
 const mapDispatchToProps = (dispatch) => {
   return {
     updateVideo: (filename, blob) => {
@@ -70,4 +76,4 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default connect(null, mapDispatchToProps)(Video)
+export default connect(mapStateToProps, mapDispatchToProps)(Video)

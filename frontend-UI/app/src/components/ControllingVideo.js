@@ -9,10 +9,12 @@ export function useControllingVideo() {
         audio_element: HTML <audio> element,
         video_position: Float within video's runtime
         audio_length: Float within audio_element's runtime 
-        audio_start: Float within audio_element's runtime - audio_length
+        audio_start: Float within audio_element's runtime - 
     }
     */
     const [syncedAudio, setSyncedAudio] = useState([]);
+
+    const [audioElements, setAudioElements] = useState([]);
 
     /* This is true when playback is, by the users account,
     either waiting for network or actually playing. 
@@ -33,7 +35,7 @@ export function useControllingVideo() {
       syncedAudio.forEach(
         (syncedAudio) => {
           console.log(syncedAudio);
-          const {audio_element, video_position, audio_start, audio_length} = syncedAudio;
+          const {audio_element, ...rest} = syncedAudio;
           if(audio_element !== except_for)
             audio_element().pause();
         }
@@ -47,7 +49,7 @@ export function useControllingVideo() {
         console.info('Video is stalled: State == ' + videoRef.current.readyState);
       }
       syncedAudio.forEach(
-        ({audio_element, video_position, audio_start, audio_length}) => {
+        ({audio_element, ...rest}) => {
           if(audio_element.readyState < window.HAVE_FUTURE_DATA) {
             console.info('Audio is stalled: State == ' + videoRef.current.readyState);
           }
@@ -56,7 +58,7 @@ export function useControllingVideo() {
   
       return videoRef.current.readyState < window.HAVE_FUTURE_DATA ||
         syncedAudio.some(
-          ({audio_element, video_position, audio_start, audio_length}) =>
+          ({audio_element, ...rest}) =>
             audio_element.readyState < window.HAVE_FUTURE_DATA
         );
     };
@@ -119,21 +121,53 @@ export function useControllingVideo() {
       console.log('</stalledEvent>');
     };
   
-    const addAudio = (audioSync) => {
-      setSyncedAudio(syncedAudio.concat(audioSync));
-      audioSync.audio_element().addEventListener('stalled', stalledEvent);
-      audioSync.audio_element().addEventListener('playing', unstallEvent);
-      audioSync.audio_element().addEventListener('canplay', unstallEvent);
-      //syncedAudio has the old length, here in this line,
-      //so it is the index at which audioSync was added.
-      return syncedAudio.length;
+    const setAudio = (newList) => {
+      //Remove all event listeners from old list
+      let newAudioElements = audioElements;
+      let newSyncedAudio = [];
+      const requiredElems = newList.length;
+      const existingElems = audioElements.length;
+
+      for(var i = 0; i < existingElems && i < requiredElems; i++) {
+        //Repurpose existing audio elements
+        newAudioElements[i].src = newList[i].src;
+
+
+        newSyncedAudio.push({
+          audio_element: newAudioElements[i],
+          ...newList[i]
+        });
+      }
+      //Create any new required audio elements
+      for(var i = existingElems; i < requiredElems; i++) {
+        const DOMElem = document.createElement('audio');
+        document.body.appendChild(DOMElem);
+        DOMElem.addEventListener('stalled', stalledEvent);
+        DOMElem.addEventListener('playing', unstallEvent);
+        DOMElem.addEventListener('canplay', unstallEvent);
+        DOMElem.src = newList[i].src;
+        newAudioElements.push(DOMElem);
+
+
+        newSyncedAudio.push({
+          audio_element: DOMElem,
+          ...newList[i]
+        });
+      }
+      //Remove unrequired audio elements
+      newAudioElements = newAudioElements.splice(
+        requiredElems, //Start deleting from
+      );
+
+      setAudioElements(newAudioElements);
+      setSyncedAudio(newSyncedAudio);
     };
   
     const userSyncVolume = (mediaEvent) => {
       // Volume of video governs volume of all audios
       console.log('<userSyncVolume>');
       syncedAudio.forEach(
-        ({audio_element, video_position, audio_start, audio_length}) => {
+        ({audio_element, ...rest}) => {
           audio_element.volume = mediaEvent.target.volume;
         }
       );
@@ -145,7 +179,7 @@ export function useControllingVideo() {
       // same as volume
       console.log('<userSyncRate>');
       syncedAudio.forEach(
-        ({audio_element, video_position, audio_start, audio_length}) => {
+        ({audio_element, ...rest}) => {
           audio_element.playbackRate = mediaEvent.target.playbackRate;
         }
       );
@@ -204,7 +238,7 @@ export function useControllingVideo() {
           //Determine if said syncedAudio object is within range
           if(
             currentTime > video_position &&
-            currentTime < video_position + audio_length
+            currentTime < video_position + (audio_length == -1 ? audio_element.duration : audio_length)
           ) {
             // Set to correct time
             const time_within_play_length = currentTime - video_position;
@@ -226,7 +260,11 @@ export function useControllingVideo() {
       })
     };
 
-    const getVideoProps = () => ({
+    const getVideoProps = (newList) => {
+      if(newList != null) {
+        setAudio(newList);
+      }
+      return {
         ref: videoRef,
         onTimeUpdate:  syncaudioPlaying,
         onCanPlay:     unstallEvent,
@@ -237,11 +275,12 @@ export function useControllingVideo() {
         onRateChange:  userSyncRate,
         onVolumeChange:userSyncVolume,
         onSeeking:     (e) => stopAllExcept(e.target)
-    });
+      };
+    };
 
     return {
         getVideoProps,
-        addAudio
+        setAudio
     };
 }
 
