@@ -5,10 +5,11 @@ import Navbar from './components/Navbar'
 import BackgroundSoundBar from './components/BackgroundSoundBar'
 import EffectsSoundBar from './components/EffectsSoundBar'
 import VideoFrame from './components/VideoFrame'
+import AudioFrame from './components/AudioFrame'
 
 class App extends Component {
   render(){
-    return (
+    return(
       <div className="App">
         <header>
           <div className="header"><Navbar /></div>
@@ -18,6 +19,7 @@ class App extends Component {
           <div className="leftSidebar"><BackgroundSoundBar /></div>
           <div className="content">
             <VideoFrame />
+            <AudioFrame />
           </div>
         </div>
         <footer>
