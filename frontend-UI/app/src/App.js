@@ -26,7 +26,7 @@ class App extends Component {
           <div className="content">
             {this.state.videoElem}
             <AudioFrame sref={e => {
-              window.setBackgroundAudio(e.audioEl)
+              window.setBackgroundAudio(e.audioEl.current)
             }} />
           </div>
         </div>
