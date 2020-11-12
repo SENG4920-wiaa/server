@@ -30,8 +30,11 @@
 ```
 
 ## Backend Installation
-
-* `pip install -r requirements.txt`
+* `Python 3 Should be installed`
+* `cd ..../server/backend`
+* `pip3 install -r requirements.txt`
+* `python3 manage.py runserver`
+* `Then its running, link to server home is printed, can open in browser`
 
 ## Changing the backend `requirements.txt`
 
