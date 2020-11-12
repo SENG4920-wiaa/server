@@ -6,7 +6,7 @@ const initState = {
     start: null,
     volume: null
   },
-  appliedEffects: [],
+  appliedEffects: null,
   labels: null,
   labelMusic: null,
   transcript: null,
