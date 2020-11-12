@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import Video from './Video'
 import { connect } from 'react-redux'
 
-const VideoFrame = (props) => {
+class VideoFrame extends Component {
   // send api request for transcript and labels
 
-  const componentDidUpdate = async () => {
+  async componentDidUpdate() {
     if (this.props.videoName !== null && this.props.videoBlob !== null) {
       console.log(this.props.videoBlob);
       var blobFile = new File([this.props.videoBlob], this.props.videoName, {type: this.props.videoBlob.type})
@@ -45,7 +45,7 @@ const VideoFrame = (props) => {
           music.push(element)
         }
       }
-
+      
       this.props.updateLabelMusic(music)
 
       const transcriptResponse = await fetch(`http://127.0.0.1:8000/transcript/${this.props.videoName}`,
@@ -74,11 +74,13 @@ const VideoFrame = (props) => {
     }
   }
 
-  return (
-    <div>
-      <Video/>
-    </div>
-  );
+  render() {
+    return (
+      <div>
+        <Video />
+      </div>
+    )
+  }
 }
 // return an object representing the store state variables we want this
 // component to have access to, in this case videoName and videoBlob

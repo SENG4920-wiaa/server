@@ -3,43 +3,21 @@ import React from 'react';
 import '../css/Sidebar.css'
 
 const RightSidebar = (props) => {
-  const { width, height, children } = props.data;
-  const diff = window.innerWidth - width;
-  const [xPosition, setX] = React.useState(diff);
-  console.log("xPosition", xPosition)
-  console.log("diff", diff)
-  console.log("window", window.innerWidth)
-  const toggleMenu = () => {
-    if (xPosition < window.innerWidth) {
-      setX(window.innerWidth);
-    } else {
-      setX(diff);
-    }
-  };
+  
+  const elements = [];
 
-  React.useEffect(() => {
-    setX(window.innerWidth);
-  }, []);
+  if(props.effects) {
+    for(const word of props.effects) {
+      elements.push((<span
+        onClick={(e) => props.handleAdd(word, e)}
+      >{JSON.stringify(word)}</span>));
+    }
+  }
+
   return (
-    <React.Fragment>
-      <div
-        className="right-side-bar grey lighten-1"
-        style={{
-          transform: `translatex(${xPosition}px)`,
-          width: `${width}px`,
-          minHeight: `${height}vh`
-        }}
-      >
-        <button
-          onClick={() => toggleMenu()}
-          className="right-toggle-menu grey lighten-1"
-          style={{
-            transform: `translate(${-width}px, 20vh)`
-          }}
-        ></button>
-        <div className="content">{children}</div>
-      </div>
-    </React.Fragment>
+    <div className="effects">
+      {elements}
+    </div>
   );
 };
 export default RightSidebar

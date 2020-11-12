@@ -4,9 +4,11 @@ import { connect } from 'react-redux'
 
 class EffectsSoundBar extends Component {
 
-  handleAddEffects = (selectedElement) => {
+  handleAddEffects = (word, clickEvent) => {
+    console.log("Attempting to add word to effects, don't know how to convert");
+    console.log(word);
     this.props.addEffects({
-      src: selectedElement.value,
+      src: "test",
       video_location:0,
       audio_start:0,
       audio_length:-1,
@@ -15,13 +17,13 @@ class EffectsSoundBar extends Component {
 
   render () {
     console.log('effects');
-    if(this.props.transcript) {
-      this.props.transcript.map(m => console.log(m.label));
+    if(this.props.words) {
+      this.props.words.map(m => console.log(m.label));
     }
     return (
       <div>
         <h5> Sound Effects</h5>
-        <RightSidebar handleAdd={handleAddEffects} effects={this.props.effects}></RightSidebar>
+        <RightSidebar handleAdd={this.handleAddEffects} effects={this.props.words}></RightSidebar>
       </div>
     )
   }
@@ -29,8 +31,17 @@ class EffectsSoundBar extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    transcript: state.transcript
+    // transcript: state.transcript
+    words: state.words,
   }
 }
 
-export default connect(mapStateToProps)(EffectsSoundBar)
+const mapDispatchToProps = (dispatch) => {
+  return {
+    addEffects: (effect_element) => {
+      dispatch({type: 'UPDATE_EFFECTS', ...effect_element})
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(EffectsSoundBar)

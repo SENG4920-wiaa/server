@@ -6,7 +6,7 @@ const initState = {
     start: null,
     volume: null
   },
-  appliedEffects: null,
+  appliedEffects: [],
   labels: null,
   labelMusic: null,
   transcript: null,
@@ -53,6 +53,17 @@ const rootReducer = (state = initState, action) => {
         start: 0,
         volume: 1
       }
+    }
+  }
+  if (action.type === 'UPDATE_EFFECTS') {
+    return {
+      ...state,
+      appliedEFfects: state.appliedEffects.concat([{
+        src: action.src,
+        video_location: action.video_location,
+        audio_start: action.audio_start,
+        audio_length: action.audio_length
+      }])
     }
   }
   return state;
