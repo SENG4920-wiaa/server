@@ -10,6 +10,9 @@
 .leftSidebar {
   float: left;
   width: 270px;
+  align-items: center;
+  margin-left: auto;
+  margin-right: auto;
   padding: 15px 10px 15px 20px;
   border-right: 3px solid #000000;
   border-bottom: 3px solid #000000;
@@ -18,7 +21,6 @@
   min-height: 100vh;
 }
 .content {
-  width: 50%;
   display: flex;
   flex-flow: column nowrap;
   justify-content: center;
