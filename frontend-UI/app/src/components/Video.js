@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 
 const Video = (props) => {
   console.log(props);
+  const [backgroundAudio, setBackgroundAudio] = useState(null);
   window.setBackgroundAudio = setBackgroundAudio.bind(this);
 
   const [file, setFile] = useState(null);
@@ -211,6 +212,9 @@ const Video = (props) => {
         audio_element.playbackRate = mediaEvent.target.playbackRate;
       }
     );
+    if(backgroundAudio != null) {
+      backgroundAudio.playbackRate = mediaEvent.target.playbackRate;
+    }
     console.log('</userSyncRate>');
   };
 
@@ -285,7 +289,21 @@ const Video = (props) => {
           audio_element().pause();
           audio_element().currentTime = audio_start;
         }
-    })
+    });
+
+    //Background starts from beginning
+    if(backgroundAudio != null && currentTime < backgroundAudio.duration) {
+      try {
+        backgroundAudio.currentTime = currentTime;
+        backgroundAudio.play();
+      } catch(exception) {
+        console.error(exception);
+        stopAllExcept();
+      }
+    } else if(backgroundAudio != null && currentTime >= backgroundAudio.duration) {
+      backgroundAudio.pause();
+      backgroundAudio.currentTime = 0;
+    }
   };
 
   const videoElem = (
@@ -321,6 +339,12 @@ const Video = (props) => {
     if(file !== null) {
       props.updateVideo(file.name, file);
     }
+  }
+
+  if(backgroundAudio !== null) {
+    console.log("Video just received a backgroundAudio:", backgroundAudio);
+  } else {
+    console.log("Video has no backgroundAudio");
   }
 
   return (
