@@ -2,28 +2,21 @@ import React, { Component } from 'react';
 import RightSidebar from './RightSidebar'
 import { connect } from 'react-redux'
 
+
 class EffectsSoundBar extends Component {
 
-  handleAddEffects = (word, clickEvent) => {
-    console.log("Attempting to add word to effects, don't know how to convert");
-    console.log(word);
-    this.props.addEffects({
-      src: "test",
-      video_location:0,
-      audio_start:0,
-      audio_length:-1,
-    });
+  // selectedOptions is a list of selected values
+  // can be multiple 
+  handleMultiEffectsMusic = (selectedOptions) => {
+    this.props.updateMultiEffectsMusic(selectedOptions)
   }
-
   render () {
-    console.log('effects');
-    if(this.props.words) {
-      this.props.words.map(m => console.log(m.label));
-    }
     return (
       <div>
-        <h5> Sound Effects</h5>
-        <RightSidebar handleAdd={this.handleAddEffects} effects={this.props.words}></RightSidebar>
+        <h5>Background Music</h5>
+        <RightSidebar
+          handleEffects={this.handleMultiEffectsMusic}
+          effects={this.props.effects} />
       </div>
     )
   }
@@ -31,15 +24,13 @@ class EffectsSoundBar extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    // transcript: state.transcript
-    words: state.words,
+    effects: state.effectsMusic
   }
 }
-
 const mapDispatchToProps = (dispatch) => {
   return {
-    addEffects: (effect_element) => {
-      dispatch({type: 'UPDATE_EFFECTS', ...effect_element})
+    updateMultiEffectsMusic: (appliedEffects) => {
+      dispatch( {type: 'UPDATE_EFFECTS_SONGS', appliedEffects: appliedEffects} )
     }
   }
 }

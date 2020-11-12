@@ -6,9 +6,10 @@ const initState = {
     start: null,
     volume: null
   },
-  appliedEffects: null,
+  appliedEffects: [],
   labels: null,
   labelMusic: null,
+  effectsMusic: null,
   transcript: null,
   words: null
 }
@@ -38,14 +39,12 @@ const rootReducer = (state = initState, action) => {
     }
   }
   if (action.type === 'UPDATE_LABEL_MUSIC'){
-    console.log(action.music)
     return {
       ...state,
       labelMusic: action.music
     }
   }
   if (action.type === 'UPDATE_BACKGROUND_SONG'){
-    console.log(action.song)
     return {
       ...state,
       appliedMusic: {
@@ -55,15 +54,27 @@ const rootReducer = (state = initState, action) => {
       }
     }
   }
-  if (action.type === 'UPDATE_EFFECTS') {
+  if (action.type === 'UPDATE_EFFECTS_MUSIC'){
     return {
       ...state,
-      appliedEFfects: state.appliedEffects.concat([{
-        src: action.src,
-        video_location: action.video_location,
-        audio_start: action.audio_start,
-        audio_length: action.audio_length
-      }])
+      effectsMusic: action.effects
+    }
+  }
+  if (action.type === 'UPDATE_EFFECTS_SONGS'){
+    var effectsList = [];
+    for (const song of action.appliedEffects){
+      var details = {
+        word: song.value.word,
+        url: song.value.track,
+        start: song.value.start_time,
+        volume: song.value.end_time
+      }
+      effectsList.push(details)
+    }
+    console.log(effectsList)
+    return {
+      ...state,
+      appliedEffects: effectsList
     }
   }
   return state;
