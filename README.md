@@ -37,19 +37,18 @@
 `export GOOGLE_APPLICATION_CREDENTIALS="./auth.json"`
 
 
-## Backend Installation
-* `Python 3 Should be installed`
-* `cd ..../server/backend`
-* `pip3 install -r requirements.txt`
-* `python3 manage.py runserver`
-* `Then its running, link to server home is printed, can open in browser`
+
+
 
 
 ## Backend Installation
 
+* Python 3 Should be installed
+* `cd server/backend`
 * `python3 -m venv env` to initialise a python virtual environment
 * `source env/bin/activate` or `env\Scripts\activate` on Windows to activate the virtual environment
 * `pip install -r requirements.txt` to install the required dependencies
+* Then its running, link to server home is printed, can open in browser
 
 ## Starting the backend
 
