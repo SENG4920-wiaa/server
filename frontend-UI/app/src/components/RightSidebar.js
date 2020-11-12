@@ -8,9 +8,13 @@ const RightSidebar = (props) => {
 
   if(props.effects) {
     for(const word of props.effects) {
-      elements.push((<span
-        onClick={(e) => props.handleAdd(word, e)}
-      >{JSON.stringify(word)}</span>));
+      elements.push((
+        <button className="btn"
+          onClick={(e) => props.handleAdd(word, e)}
+        >
+          {word.word + ' (' + word.start_time + ')'}
+        </button>
+      ));
     }
   }
 
