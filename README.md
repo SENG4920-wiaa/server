@@ -42,3 +42,5 @@
 1. Download the service account JSON file
 
 2. Set the path as the `GOOGLE_APPLICATION_CREDENTIALS` environment variable in your terminal: https://cloud.google.com/docs/authentication/production#passing_variable
+
+    export GOOGLE_APPLICATION_CREDENTIALS="./auth.json"
