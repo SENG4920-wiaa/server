@@ -1,0 +1,57 @@
+
+.header {
+  width: 100%;
+  top: 0;
+}
+.body {
+  width: 100%;
+  position: fixed;
+}
+.leftSidebar {
+  float: left;
+  width: 270px;
+  align-items: center;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 15px 10px 15px 20px;
+  border-right: 3px solid #000000;
+  border-bottom: 3px solid #000000;
+  background-color: #bdbdbd;
+  border-color: #bdbdbd;
+  min-height: 100vh;
+}
+.content {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+.rightSidebar {
+  float: right;
+  width: 270px;
+  padding: 15px 10px 15px 20px;
+  border-left: 3px solid #000000;
+  border-bottom: 3px solid #000000;
+  background-color: #bdbdbd;
+  border-color: #bdbdbd;
+  min-height: 100vh;
+}
+.drag-drop-zone {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  padding: 2rem;
+  background: #f2f2f2;
+  border-radius: 0.5rem;
+  opacity: 0.7
+}
+
+.video-player {
+  display: flex;
+  align-items: center;
+  width: 800px;
+  height: auto;
+}
