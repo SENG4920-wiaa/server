@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Video from './Video'
 import { connect } from 'react-redux'
+import { stopwords } from '../stopwords'
 
 class VideoFrame extends Component {
   // send api request for transcript and labels
@@ -71,6 +72,39 @@ class VideoFrame extends Component {
       }
       this.props.updateTranscript(transcript, words)
 
+      // remove stop words from transcript
+      const transcriptList = transcript.split(' ')
+      var filtered = transcriptList.filter(function(e){return this.indexOf(e)<0;},stopwords);
+
+      // get sound effects for each filtered transcript word
+      let effects = [];
+      for (const fword of filtered) {
+        const effectsResponse = await fetch(`http://127.0.0.1:8000/effects/?keyword=${fword}`,
+          {
+            method: 'GET',
+          }
+        ).then(res => res.json())
+        if (effectsResponse.tracks.length > 0) {
+          // get the start time of the words that remain unfiltered
+          var start_time = null;
+          var end_time = null;
+          for (const w of words) {
+            if (w.word === fword){
+              start_time = w.start_time;
+              end_time = w.end_time;
+              break;
+            }
+          }
+          const element = {
+            word: fword,
+            start_time: start_time,
+            end_time: end_time,
+            tracks: effectsResponse.tracks
+          }
+          effects.push(element)
+        }
+      }
+      this.props.updateEffectsMusic(effects)
     }
   }
   render() {
@@ -100,6 +134,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     updateLabelMusic: (music) => {
       dispatch( {type: 'UPDATE_LABEL_MUSIC', music: music})
+    },
+    updateEffectsMusic: (effects) => {
+      dispatch( {type: 'UPDATE_EFFECTS_MUSIC', effects: effects})
     }
   }
 }

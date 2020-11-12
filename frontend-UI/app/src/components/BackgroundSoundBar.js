@@ -10,10 +10,6 @@ class BackgroundSoundBar extends Component {
   }
 
   render () {
-    console.log("music")
-    if (this.props.music) {
-      this.props.music.map(m => console.log(m.label))
-    }
     return(
       <div>
         <h5>Background Music</h5>

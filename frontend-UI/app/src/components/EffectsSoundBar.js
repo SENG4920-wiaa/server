@@ -2,12 +2,21 @@ import React, { Component } from 'react';
 import RightSidebar from './RightSidebar'
 import { connect } from 'react-redux'
 
+
 class EffectsSoundBar extends Component {
 
+  // selectedOptions is a list of selected values
+  // can be multiple 
+  handleMultiEffectsMusic = (selectedOptions) => {
+    this.props.updateMultiEffectsMusic(selectedOptions)
+  }
   render () {
-
     return (
       <div>
+        <h5>Background Music</h5>
+        <RightSidebar
+          handleEffects={this.handleMultiEffectsMusic}
+          effects={this.props.effects} />
       </div>
     )
   }
@@ -15,8 +24,15 @@ class EffectsSoundBar extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    transcript: state.transcript
+    effects: state.effectsMusic
+  }
+}
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updateMultiEffectsMusic: (appliedEffects) => {
+      dispatch( {type: 'UPDATE_EFFECTS_SONGS', appliedEffects: appliedEffects} )
+    }
   }
 }
 
-export default connect(mapStateToProps)(EffectsSoundBar)
+export default connect(mapStateToProps, mapDispatchToProps)(EffectsSoundBar)
