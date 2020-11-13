@@ -50,7 +50,7 @@ const rootReducer = (state = initState, action) => {
       appliedMusic: {
         url: action.song,
         start: 0,
-        volume: 0.3
+        volume: 0.1
       }
     }
   }
@@ -68,7 +68,7 @@ const rootReducer = (state = initState, action) => {
         url: song.value.track,
         start: song.value.start_time,
         end: song.value.end_time,
-        volume: 0.5
+        volume: 0.3
       }
       effectsList.push(details)
     }
