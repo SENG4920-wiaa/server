@@ -46,7 +46,7 @@ class VideoFrame extends Component {
           music.push(element)
         }
       }
-      
+
       this.props.updateLabelMusic(music)
 
       const transcriptResponse = await fetch(`http://127.0.0.1:8000/transcript/${this.props.videoName}`,
@@ -62,49 +62,57 @@ class VideoFrame extends Component {
 
       let transcript = ""
       let words = []
-      for (const items of transcriptResponse.annotation_results[0].speech_transcriptions) {
-        const alts = items.alternatives[0]
-        transcript = transcript.concat(alts.transcript)
-        transcript = transcript.concat(" ")
-        for (const w of alts.words) {
-          words.push(w)
-        }
-      }
-      this.props.updateTranscript(transcript, words)
-
-      // remove stop words from transcript
-      const transcriptList = transcript.split(' ')
-      var filtered = transcriptList.filter(function(e){return this.indexOf(e)<0;},stopwords);
-
-      // get sound effects for each filtered transcript word
-      let effects = [];
-      for (const fword of filtered) {
-        const effectsResponse = await fetch(`http://127.0.0.1:8000/effects/?keyword=${fword}`,
-          {
-            method: 'GET',
+      try {
+        for (const items of transcriptResponse.annotation_results[0].speech_transcriptions) {
+          if (items.alternatives == []) continue;
+          const alts = items.alternatives[0]
+          transcript = transcript.concat(alts.transcript)
+          transcript = transcript.concat(" ")
+          for (const w of alts.words) {
+            words.push(w)
           }
-        ).then(res => res.json())
-        if (effectsResponse.tracks.length > 0) {
-          // get the start time of the words that remain unfiltered
-          var start_time = null;
-          var end_time = null;
-          for (const w of words) {
-            if (w.word === fword){
-              start_time = w.start_time;
-              end_time = w.end_time;
-              break;
+        }
+        // if no transcript or words dont update store
+        if (transcript !== "" || words !== []){
+          this.props.updateTranscript(transcript, words)
+
+          // remove stop words from transcript
+          const transcriptList = transcript.split(' ')
+          var filtered = transcriptList.filter(function(e){return this.indexOf(e)<0;},stopwords);
+
+          // get sound effects for each filtered transcript word
+          let effects = [];
+          for (const fword of filtered) {
+            const effectsResponse = await fetch(`http://127.0.0.1:8000/effects/?keyword=${fword}`,
+              {
+                method: 'GET',
+              }
+            ).then(res => res.json())
+            if (effectsResponse.tracks.length > 0) {
+              // get the start time of the words that remain unfiltered
+              var start_time = null;
+              var end_time = null;
+              for (const w of words) {
+                if (w.word === fword){
+                  start_time = w.start_time;
+                  end_time = w.end_time;
+                  break;
+                }
+              }
+              const element = {
+                word: fword,
+                start_time: start_time,
+                end_time: end_time,
+                tracks: effectsResponse.tracks
+              }
+              effects.push(element)
             }
           }
-          const element = {
-            word: fword,
-            start_time: start_time,
-            end_time: end_time,
-            tracks: effectsResponse.tracks
-          }
-          effects.push(element)
+          this.props.updateEffectsMusic(effects)
         }
+      } catch (error) {
+        console.log(error);
       }
-      this.props.updateEffectsMusic(effects)
     }
   }
 
