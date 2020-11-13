@@ -13,7 +13,7 @@ class EffectsSoundBar extends Component {
   render () {
     return (
       <div>
-        <h5>Background Music</h5>
+        <h5>Sound Effects</h5>
         <RightSidebar
           handleEffects={this.handleMultiEffectsMusic}
           effects={this.props.effects} />
