@@ -56,7 +56,11 @@ class RenderUpload extends Component {
         var blob = new File([compileResponse], 'temp_video.mp4', {type: 'video/mp4'})
         var objectURL = URL.createObjectURL(blob);
 
-        console.log(objectURL)
+        window.a_elem = document.createElement('a');
+        window.a_elem.href = objectURL;
+        window.a_elem.download = 'AI Enhanced Video.mp4'
+        window.a_elem.target='_blank';
+        window.a_elem.click();
       } catch (exc) {
         console.log(exc);
       }
