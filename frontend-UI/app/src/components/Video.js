@@ -232,13 +232,20 @@ const Video = (props) => {
           console.warn("Bad URL/start time");
           continue;
         }
-        const DOMElem = document.createElement('audio');
-        document.getElementById("root").appendChild(DOMElem);
+        let DOMSuper = document.createElement('li');
+        DOMSuper.className = 'collection-item';
+        DOMSuper.innerText = word_props.word;
+
+        let DOMElem = document.createElement('audio');
         DOMElem.addEventListener('stalled', stalledEvent);
         DOMElem.addEventListener('playing', unstallEvent);
         DOMElem.addEventListener('canplay', unstallEvent);
-        DOMElem.src = word_props.url;
         DOMElem.controls = true;
+        DOMElem.src = word_props.url;
+        DOMSuper.appendChild(DOMElem);
+
+        console.log(DOMSuper);
+        document.getElementById("effectsElems").appendChild(DOMSuper);
 
         corresponding_audio_obj = {
           audio_element: DOMElem,
