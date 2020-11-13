@@ -397,24 +397,29 @@ const Video = (props) => {
           const time_within_play_length = currentTime - video_position;
           const time_within_audio = time_within_play_length + audio_start;
 
-          try {
-            audio_element.currentTime = time_within_audio;
-            // The audio should play, but I think the browser
-            // if it needed to stall here, would still trigger the stall event
-            if(audio_element.paused) {
-              console.log("Starting " + audio_element.src);
+          const time_diff = time_within_audio - audio_element.currentTime;
+
+          if(time_diff > 0.001 || time_diff < -0.001 || audio_element.paused) {
+
+            try {
+              audio_element.currentTime = time_within_audio;
+              // The audio should play, but I think the browser
+              // if it needed to stall here, would still trigger the stall event
+              if(audio_element.paused) {
+                console.log("Starting " + audio_element.src);
+              }
+              audio_element.play();
+            } catch(exception) {
+              console.error(exception);
+              stopAllExcept();
             }
-            audio_element.play();
-          } catch(exception) {
-            console.error(exception);
-            stopAllExcept();
           }
         } else {
           if(!audio_element.paused) {
             console.log("Stopping " + audio_element.src);
+            audio_element.pause();
+            audio_element.currentTime = audio_start;
           }
-          audio_element.pause();
-          audio_element.currentTime = audio_start;
         }
     });
 
