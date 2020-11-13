@@ -25,11 +25,12 @@ class App extends Component {
           <div className="rightSidebar"><EffectsSoundBar /></div>
           <div className="leftSidebar"><BackgroundSoundBar /></div>
           <div className="content">
-            <RenderUpload />
             {this.state.videoElem}
             <AudioFrame sref={e => {
               window.setBackgroundAudio(e.audioEl.current)
             }} />
+            <RenderUpload />
+            <ul id="effectsElems" className="collection"></ul>
           </div>
         </div>
         <footer>
