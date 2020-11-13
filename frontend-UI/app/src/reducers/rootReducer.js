@@ -6,7 +6,7 @@ const initState = {
     start: null,
     volume: null
   },
-  appliedEffects: [],
+  appliedEffects: null,
   labels: null,
   labelMusic: null,
   effectsMusic: null,
@@ -67,7 +67,8 @@ const rootReducer = (state = initState, action) => {
         word: song.value.word,
         url: song.value.track,
         start: song.value.start_time,
-        volume: song.value.end_time
+        end: song.value.end_time,
+        volume: 0.5
       }
       effectsList.push(details)
     }
