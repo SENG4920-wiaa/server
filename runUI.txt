@@ -15,6 +15,7 @@ $ yarn build
 
 Now by going to the python flask link, you should see the react app, refresh te page
 When testing new frontend code, run the command 
+$ yarn install
 $ yarn build
 before refreshig the webpage
 This command compiles all the json of the react app.
