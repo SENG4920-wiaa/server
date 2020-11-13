@@ -1,4 +1,4 @@
-import React, { Component, useRef } from 'react';
+import React, { Component } from 'react';
 import './css/Style.css'
 
 import Navbar from './components/Navbar'
@@ -6,14 +6,9 @@ import BackgroundSoundBar from './components/BackgroundSoundBar'
 import EffectsSoundBar from './components/EffectsSoundBar'
 import VideoFrame from './components/VideoFrame'
 import AudioFrame from './components/AudioFrame'
+import RenderUpload from './components/RenderUpload'
 
 class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      videoElem: <VideoFrame ref={e => {this.state.refVideo=e;}}/>
-    };
-  }
   render(){
     return(
       <div className="App">
@@ -24,10 +19,9 @@ class App extends Component {
           <div className="rightSidebar"><EffectsSoundBar /></div>
           <div className="leftSidebar"><BackgroundSoundBar /></div>
           <div className="content">
-            {this.state.videoElem}
-            <AudioFrame sref={e => {
-              window.setBackgroundAudio(e.audioEl.current)
-            }} />
+            <VideoFrame />
+            <AudioFrame />
+            <RenderUpload />
           </div>
         </div>
         <footer>
