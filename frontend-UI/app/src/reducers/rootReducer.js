@@ -50,7 +50,7 @@ const rootReducer = (state = initState, action) => {
       appliedMusic: {
         url: action.song,
         start: 0,
-        volume: 1
+        volume: 0.3
       }
     }
   }
