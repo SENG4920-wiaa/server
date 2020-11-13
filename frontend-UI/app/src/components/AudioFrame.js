@@ -11,7 +11,6 @@ class AudioFrame extends Component {
       <div>
       <ReactAudioPlayer
         src={this.props.appliedMusic.url}
-        autoPlay
         controls
         ref={this.props.sref}
       />
