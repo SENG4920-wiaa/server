@@ -77,7 +77,7 @@ class RenderUpload extends Component {
   render () {
     return (
       <div>
-        <button onClick={this.uploadVideo}>
+        <button onClick={this.uploadVideo.bind(this)}>
           Render and Download
         </button>
       </div>
