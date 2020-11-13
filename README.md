@@ -29,17 +29,13 @@
 }
 ```
 
-
 ## Google Cloud Authentication
 
 1. Download the service account JSON file
 2. Set the path as the `GOOGLE_APPLICATION_CREDENTIALS` environment variable in your terminal: https://cloud.google.com/docs/authentication/production#passing_variable
-`export GOOGLE_APPLICATION_CREDENTIALS="./auth.json"`
-
-
-
-
-
+    * `export GOOGLE_APPLICATION_CREDENTIALS="/home/user/Downloads/my-key.json"`
+    * `$env:GOOGLE_APPLICATION_CREDENTIALS="C:\Users\username\Downloads\my-key.json"` in PowerShell
+    * `set GOOGLE_APPLICATION_CREDENTIALS="C:\Users\username\Downloads\my-key.json"` in Command Prompt
 
 ## Backend Installation
 
@@ -48,13 +44,12 @@
 * `python3 -m venv env` to initialise a python virtual environment
 * `source env/bin/activate` or `env\Scripts\activate` on Windows to activate the virtual environment
 * `pip install -r requirements.txt` to install the required dependencies
-* Then its running, link to server home is printed, can open in browser
 
 ## Starting the backend
 
 * `source env/bin/activate` or `env\Scripts\activate` on Windows to activate the virtual environment
 * `python manage.py runserver` to run the server
-
+* Link to server home is printed, can open in browser
 
 ## Changing the backend `requirements.txt`
 * `pip freeze > requirements.txt`
