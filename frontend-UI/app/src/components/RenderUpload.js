@@ -3,7 +3,9 @@ import { connect } from 'react-redux'
 
 class RenderUpload extends Component {
 
-  async uploadVideo(){
+  async uploadVideo(DOMEvent){
+    DOMEvent.target.disabled = true;
+    DOMEvent.target.innerText = 'Loading...';
     if (this.props.videoName !== null && this.props.videoBlob !== null && (this.props.appliedMusic.url !== null || this.props.appliedEffects != null)) {
       var blobFile = new File([this.props.videoBlob], this.props.videoName, {type: this.props.videoBlob.type})
       var formData = new FormData();
@@ -64,13 +66,15 @@ class RenderUpload extends Component {
       } catch (exc) {
         console.log(exc);
       }
+      DOMEvent.target.disabled = false;
+      DOMEvent.target.innerText = 'Render and Download';
     }
   }
 
   render () {
     return (
       <div>
-        <button onClick={() => {this.uploadVideo()}}>
+        <button onClick={this.uploadVideo}>
           Render and Download
         </button>
       </div>
