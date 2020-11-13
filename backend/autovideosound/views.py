@@ -21,14 +21,15 @@ from wordfreq import zipf_frequency
 import moviepy.editor as editor
 
 class UploadView(APIView):
-  def post(self, request):
-    try:
-      video = request.data['file']#['video']
-      video_key = str(int(time())) + '_' + video.__str__()
-      path = default_storage.save(video_key, ContentFile(video.read()))
-    except:
-      return Response(status=status.HTTP_400_BAD_REQUEST)
-    return Response(video_key, status=status.HTTP_201_CREATED)
+    parser_classes = [FileUploadParser]
+
+    def post(self, request, filename):
+        video = request.data['file']
+ 
+        video_key = str(int(time())) + '_' + video.__str__()
+        path = default_storage.save(video_key, ContentFile(video.read()))
+
+        return Response(video_key, status=status.HTTP_201_CREATED)
 
 #   def start_aws_analysis(self, video_key):
 #     put_url = json.loads(requests.get(
