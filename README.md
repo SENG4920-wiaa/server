@@ -53,3 +53,25 @@
 
 ## Changing the backend `requirements.txt`
 * `pip freeze > requirements.txt`
+
+# Frontend
+* The Front-End consists of frontend-UI/app, the Javascript React Single-Page Application, and frontend-UI/server, the Python Flask server.
+* The Python Flask server's only responsibliity is as a dumb file hoster, sending the right CORS headers.
+* We use `yarn` for package management within frontend-UI/app
+* frontend/ is not used
+* We use a virtual environment for flask, but that is optional.
+
+## Starting
+Install yarn package manager from your system package manager
+
+    cd frontend-UI/app/
+    yarn install
+    yarn build
+
+In another terminal:
+
+    cd frontend-UI/server
+    virtualenv venv
+    . venv/bin/activate
+    pip3 install -r requirements.txt
+    python3 app.py
