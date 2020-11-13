@@ -207,7 +207,7 @@ class MusicViewSet(viewsets.GenericViewSet):
       return Response({"tracks": urls})
 
 class CompiledView(APIView):
-    def get(self, request, filename):
+    def post(self, request, filename):
         # Parse JSON data
         if 'music' in request.data: 
             music_url = request.data['music']['url']
