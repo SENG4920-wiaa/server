@@ -26,8 +26,8 @@ class RenderUpload extends Component {
           effectsList.push(
             {
               url: effect.url,
-              start: effect.start,
-              volume: effect.volume
+              start: effect.start.slice(0,-1)-0,
+              volume: effect.volume.slice(0,-1)-0
             }
           )
         }
