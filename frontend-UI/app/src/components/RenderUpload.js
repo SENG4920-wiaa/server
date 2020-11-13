@@ -55,8 +55,11 @@ class RenderUpload extends Component {
       //var contentType = compileResponse.headers["content-type"] || 'application/octet-binary';
       console.log(compileResponse)
       try {
-        var blob = new File([compileResponse], 'temp_video.mp4', {type: 'video/mp4'})
+        var blob = await compileResponse.blob();
+        var blob = new File([blob], 'temp_video.mp4', {type: 'video/mp4'})
+        console.log('blob', blob);
         var objectURL = URL.createObjectURL(blob);
+        console.log('objectURL', objectURL);
 
         window.a_elem = document.createElement('a');
         window.a_elem.href = objectURL;
