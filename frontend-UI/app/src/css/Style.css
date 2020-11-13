@@ -55,3 +55,11 @@
   width: 800px;
   height: auto;
 }
+.effects {
+  display:flex;
+  flex-direction:column;
+}
+
+.effects > .btn {
+  margin-bottom:1em;
+}

@@ -46,7 +46,7 @@ class VideoFrame extends Component {
           music.push(element)
         }
       }
-
+      
       this.props.updateLabelMusic(music)
 
       const transcriptResponse = await fetch(`http://127.0.0.1:8000/transcript/${this.props.videoName}`,
@@ -107,10 +107,11 @@ class VideoFrame extends Component {
       this.props.updateEffectsMusic(effects)
     }
   }
+
   render() {
     return (
       <div>
-        <Video />
+        <Video {...this.props} />
       </div>
     )
   }
