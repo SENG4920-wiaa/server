@@ -3,7 +3,9 @@ import { connect } from 'react-redux'
 
 class RenderUpload extends Component {
 
-  async uploadVideo(){
+  async uploadVideo(DOMEvent){
+    DOMEvent.target.disabled = true;
+    DOMEvent.target.innerText = 'Loading...';
     if (this.props.videoName !== null && this.props.videoBlob !== null && (this.props.appliedMusic.url !== null || this.props.appliedEffects != null)) {
       var blobFile = new File([this.props.videoBlob], this.props.videoName, {type: this.props.videoBlob.type})
       var formData = new FormData();
@@ -26,8 +28,8 @@ class RenderUpload extends Component {
           effectsList.push(
             {
               url: effect.url,
-              start: effect.start,
-              volume: effect.volume
+              start: effect.start.slice(0,-1)-0,
+              volume: effect.volume.slice(0,-1)-0
             }
           )
         }
@@ -53,20 +55,29 @@ class RenderUpload extends Component {
       //var contentType = compileResponse.headers["content-type"] || 'application/octet-binary';
       console.log(compileResponse)
       try {
-        var blob = new File([compileResponse], 'temp_video.mp4', {type: 'video/mp4'})
+        var blob = await compileResponse.blob();
+        var blob = new File([blob], 'temp_video.mp4', {type: 'video/mp4'})
+        console.log('blob', blob);
         var objectURL = URL.createObjectURL(blob);
+        console.log('objectURL', objectURL);
 
-        console.log(objectURL)
+        window.a_elem = document.createElement('a');
+        window.a_elem.href = objectURL;
+        window.a_elem.download = 'AI Enhanced Video.mp4'
+        window.a_elem.target='_blank';
+        window.a_elem.click();
       } catch (exc) {
         console.log(exc);
       }
+      DOMEvent.target.disabled = false;
+      DOMEvent.target.innerText = 'Render and Download';
     }
   }
 
   render () {
     return (
       <div>
-        <button onClick={() => {this.uploadVideo()}}>
+        <button onClick={this.uploadVideo.bind(this)}>
           Render and Download
         </button>
       </div>
