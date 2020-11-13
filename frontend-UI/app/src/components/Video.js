@@ -119,6 +119,27 @@ const Video = (props) => {
         Everything plays when we're not still waiting and we *are* trying to play
 
     */
+   let debug_message = '';
+
+    if(mediaEvent.target == videoElem) {
+      debug_message = 'Video';
+    } else if(mediaEvent.target == backgroundAudio) {
+      debug_message = 'Background music';
+    } else {
+      let found = false;
+      for(const {audio_elem, ...rest} of store.appliedEffects) {
+        if(audio_elem == mediaEvent.target) {
+          debug_message = JSON.stringify(rest);
+          found = true;
+          break;
+        }
+      }
+      if(!found) {
+        debug_message = mediaEvent.target;
+      }
+    }
+
+    console.log(debug_message,  " unstalled");
 
     if(!tryingPlay.current || areAnyStalled()) {
       console.info('Waiting for more data or user to click play');
@@ -206,6 +227,11 @@ const Video = (props) => {
       if(corresponding_audio_obj === undefined) {
         //This list element is new
         console.info(" New audio element: " + JSON.stringify(word_props));
+        if(word_props.start == null || word_props.url == null || 
+            word_props.url == '' || word_props.start == '') {
+          console.warn("Bad URL/start time");
+          continue;
+        }
         const DOMElem = document.createElement('audio');
         document.getElementById("root").appendChild(DOMElem);
         DOMElem.addEventListener('stalled', stalledEvent);
@@ -399,15 +425,18 @@ const Video = (props) => {
 
           const time_diff = time_within_audio - audio_element.currentTime;
 
-          if(time_diff > 0.001 || time_diff < -0.001 || audio_element.paused) {
-
+          if(time_diff > 0.1 || time_diff < -0.1) {
             try {
+              console.log("Re-aligning "+JSON.stringify(rest)+" audio ("+time_diff+")");
               audio_element.currentTime = time_within_audio;
-              // The audio should play, but I think the browser
-              // if it needed to stall here, would still trigger the stall event
-              if(audio_element.paused) {
-                console.log("Starting " + audio_element.src);
-              }
+            } catch(exception) {
+              console.error(exception);
+              stopAllExcept();
+            }
+          }
+          if(audio_element.paused) {
+            try {
+              console.log("Starting " + audio_element.src);
               audio_element.play();
             } catch(exception) {
               console.error(exception);
@@ -416,7 +445,7 @@ const Video = (props) => {
           }
         } else {
           if(!audio_element.paused) {
-            console.log("Stopping " + audio_element.src);
+            console.log("Stopping "+JSON.stringify(rest)+" audio");
             audio_element.pause();
             audio_element.currentTime = audio_start;
           }
@@ -425,16 +454,32 @@ const Video = (props) => {
 
     //Background starts from beginning
     if(backgroundAudio != null && currentTime < backgroundAudio.duration) {
-      try {
-        backgroundAudio.currentTime = currentTime;
-        backgroundAudio.play();
-      } catch(exception) {
-        console.error(exception);
-        stopAllExcept();
+      const time_diff = currentTime - backgroundAudio.currentTime;
+
+      if(time_diff > 0.1 || time_diff < -0.1) {
+        try {
+          console.log("Re-aligning Background audio ("+time_diff+")");
+          backgroundAudio.currentTime = currentTime;
+        } catch(exception) {
+          console.error(exception);
+          stopAllExcept();
+        }
+      }
+      if(backgroundAudio.paused) {
+        try {
+          console.log("Starting Background audio");
+          backgroundAudio.play();
+        } catch(exception) {
+          console.error(exception);
+          stopAllExcept();
+        }
       }
     } else if(backgroundAudio != null && currentTime >= backgroundAudio.duration) {
-      backgroundAudio.pause();
-      backgroundAudio.currentTime = 0;
+      if(!backgroundAudio.paused) {
+        console.log("Stopping Background audio");
+        backgroundAudio.pause();
+        backgroundAudio.currentTime = 0;
+      }
     }
   };
 
