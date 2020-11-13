@@ -9,6 +9,12 @@ import AudioFrame from './components/AudioFrame'
 import RenderUpload from './components/RenderUpload'
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      videoElem: <VideoFrame ref={e => {this.state.refVideo=e;}}/>
+    };
+  }
   render(){
     return(
       <div className="App">
@@ -19,9 +25,11 @@ class App extends Component {
           <div className="rightSidebar"><EffectsSoundBar /></div>
           <div className="leftSidebar"><BackgroundSoundBar /></div>
           <div className="content">
-            <VideoFrame />
-            <AudioFrame />
             <RenderUpload />
+            {this.state.videoElem}
+            <AudioFrame sref={e => {
+              window.setBackgroundAudio(e.audioEl.current)
+            }} />
           </div>
         </div>
         <footer>
