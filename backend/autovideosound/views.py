@@ -17,6 +17,8 @@ from google.cloud.videointelligence import enums
 from google.protobuf.json_format import MessageToDict
 
 from wordfreq import zipf_frequency
+import copy
+import re
 
 import moviepy.editor as editor
 
@@ -46,9 +48,20 @@ class LabelView(APIView):
         file_obj = request.data['file']
 
         # self.implicit()
-        labels = self.analyze_labels_file(file_obj)
+        annotations = self.analyze_labels_file(file_obj)
 
-        return Response(labels) 
+        labels = annotations["annotation_results"][0]["segment_label_annotations"]
+
+        sanitised = []
+
+        for label in labels:
+            description = label["entity"]["description"]
+            confidence = label["segments"][0]["confidence"]
+            sanitised.append({"description": description, "confidence": confidence})
+
+        sanitised.sort(key=lambda x: x["confidence"], reverse=True)
+
+        return Response(sanitised) 
 
     def implicit(self):
         from google.cloud import storage
@@ -110,10 +123,34 @@ class TranscriptView(APIView):
         file_obj = request.data['file']
         transcript = self.speech_transcription(file_obj)
 
-        return Response(transcript) 
+        transcriptions = transcript["annotation_results"][0]["speech_transcriptions"]
+
+        text = ""
+        
+        for transcription in transcriptions:
+            text += transcription["alternatives"][0]["transcript"]
+
+        words = []
+
+        for transcription in transcriptions:
+            for word in transcription["alternatives"][0]["words"]:
+                str = word["word"]
+                str = re.sub('^\W+', '', str)
+                str = re.sub('\W+$', '', str)
+                freq = zipf_frequency(str, "en")
+
+                wordcopy = copy.deepcopy(word)
+                wordcopy["word"] = str
+                wordcopy["freq"] = freq
+
+                words.append(wordcopy)
+
+        wordssorted = sorted(words, key=lambda x: x["freq"])
+
+        return Response({"transcript": text, "words": words, "sorted": wordssorted})
 
     def speech_transcription(self, file):
-        """Transcribe speech from a video stored on GCS."""
+        """Transcribe speech from a video given a file path."""
         from google.cloud import videointelligence
 
         video_client = videointelligence.VideoIntelligenceServiceClient()
